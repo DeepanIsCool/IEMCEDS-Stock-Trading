@@ -34,10 +34,9 @@ const userSchema = new mongoose.Schema(
 
     portfolios: [{
       portfolio_name: {
-        type: String, // Allow users to name portfolios
+        type: String,
         required: true
       },
-
       stock_holdings: [{
         stock_symbol: {
           type: String,
@@ -56,7 +55,6 @@ const userSchema = new mongoose.Schema(
           required: true
         }
       }],
-
       cash_holding: {
         cash_in_hand: {
           type: Number,
@@ -64,55 +62,63 @@ const userSchema = new mongoose.Schema(
           required: true
         },
         intraday_profit_loss: {
-          type: Number,  // Can be positive (profit) or negative (loss)
+          type: Number,
+          default: 0,
+          required: true
+        }
+      },
+      intraday_holdings: {
+        intraday_buy: {
+          type: Number,
+          default: 0,
+          required: true
+        },
+        intraday_sell: {
+          type: Number,
           default: 0,
           required: true
         }
       },
 
-      intraday_holdings: {
-        intraday_buy: {
-          type: Number,  // Amount bought intraday
-          default: 0,
+      // Portfolio value history for tracking value over time
+      portfolio_value_history: [{
+        value: {
+          type: Number,  // The portfolio value at a specific point in time
           required: true
         },
-        intraday_sell: {
-          type: Number,  // Amount sold intraday
-          default: 0,
-          required: true
+        timestamp: {
+          type: Date,    // When this value was recorded
+          default: Date.now
         }
-      }
+      }]
     }],
 
-    membership : {
+    membership: {
       plan_type: {
-        type: String, // E.g., "free", "premium", "pro"
-        enum: ['basic', 'pro', 'elite'], // Limit to these specific values
+        type: String,
+        enum: ['basic', 'pro', 'elite'],
         required: true,
         default: 'free'
       },
       start_date: {
         type: Date,
-        default: Date.now // Start date defaults to the current date
+        default: Date.now
       },
       end_date: {
-        type: Date, // End date for when the membership expires
+        type: Date,
         required: true
       },
       status: {
         type: String,
-        enum: ['active', 'expired', 'cancelled'], // Track the status of the membership
+        enum: ['active', 'expired', 'cancelled'],
         default: 'active'
       }
     },
 
     access_token: {
       type: String,
-    },
+    }
   },
-  
-
-
   { timestamps: true }
 );
 
