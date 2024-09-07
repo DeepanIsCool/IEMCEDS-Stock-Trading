@@ -6,7 +6,7 @@ require("dotenv").config();
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
 
 // Connect to MongoDB
 connectDb();
