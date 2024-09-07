@@ -17,6 +17,8 @@ app.use(express.json());
 // Use CORS middleware to allow all origins
 app.use(cors());
 
+//Routes
+app.use("/api/userRoutes", require("./routes/userRoutes"));
 
 app.get("/api", (req, res) => {
     res.send("Welcome to the TradePro Backend");

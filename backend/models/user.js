@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const userSchema = new mongoose.Schema(
   {
     phone: {
@@ -17,12 +19,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    first_name: {
-      type: String,
-      required: true,
-    },
-
-    last_name: {
+    name: {
       type: String,
       required: true,
     },
@@ -35,48 +32,48 @@ const userSchema = new mongoose.Schema(
     portfolios: [{
       portfolio_name: {
         type: String,
-        required: true
+        required: false
       },
       stock_holdings: [{
         stock_symbol: {
           type: String,
-          required: true
+          required: false
         },
         quantity: {
           type: Number,
-          required: true
+          required: false
         },
         purchase_price: {
           type: Number,
-          required: true
+          required: false
         },
         purchase_date: {
           type: Date,
-          required: true
+          required: false
         }
       }],
       cash_holding: {
         cash_in_hand: {
           type: Number,
           default: 0,
-          required: true
+          required: false
         },
         intraday_profit_loss: {
           type: Number,
           default: 0,
-          required: true
+          required: false
         }
       },
       intraday_holdings: {
         intraday_buy: {
           type: Number,
           default: 0,
-          required: true
+          required: false
         },
         intraday_sell: {
           type: Number,
           default: 0,
-          required: true
+          required: false
         }
       },
 
@@ -84,7 +81,7 @@ const userSchema = new mongoose.Schema(
       portfolio_value_history: [{
         value: {
           type: Number,  // The portfolio value at a specific point in time
-          required: true
+          required: false
         },
         timestamp: {
           type: Date,    // When this value was recorded
@@ -97,8 +94,8 @@ const userSchema = new mongoose.Schema(
       plan_type: {
         type: String,
         enum: ['basic', 'pro', 'elite'],
-        required: true,
-        default: 'free'
+        required: false,
+        default: 'basic'
       },
       start_date: {
         type: Date,
@@ -106,7 +103,7 @@ const userSchema = new mongoose.Schema(
       },
       end_date: {
         type: Date,
-        required: true
+        required: false
       },
       status: {
         type: String,
