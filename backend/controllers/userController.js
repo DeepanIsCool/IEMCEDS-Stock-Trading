@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const constants = require("../constants");
 
 // Sign-up function
 const Sign_up = asyncHandler(async (req, res) => {
@@ -83,14 +84,27 @@ const Sign_in = asyncHandler(async (req, res) => {
   }
 });
 
-// Fetch user data function
-const getUserData = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const user = await User.findById(userId).select('-password');
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).json("User not found");
+const userProfile = asyncHandler(async (req, res) => {
+  try {
+    // Extract the ID from the authenticated user
+    const id = req.user._id;
+
+    // Fetch and return the specific student if id is provided
+    if (id) {
+      const user = await User.findById(id);
+      if (user) {
+        return res.status(constants.OK).json(user);
+      } else {
+        return res.status(constants.NOT_FOUND).json({ message: 'User not found' });
+      }
+    } else {
+      // Fetch and return all students if no id is provided (optional, adjust as needed)
+      const users = await User.find({});
+      return res.status(constants.OK).json(users);
+    }
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(constants.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
   }
 });
 
@@ -103,5 +117,5 @@ module.exports = {
   Sign_up,
   Sign_in,
   Sign_out,
-  getUserData,
+  userProfile,
 };
