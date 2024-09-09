@@ -21,7 +21,6 @@ const Dashboard = () => {
         console.error('Error fetching user details:', error);
       }
     };
-
     fetchUserDetails();
   }, []);
 
@@ -64,13 +63,13 @@ const Dashboard = () => {
             className="p-6 bg-white rounded-lg shadow-lg"
           >
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Cash Holdings</h2>
-            <p className="text-3xl font-bold text-green-600"></p>
+            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
             <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Profit/Loss</h2>
-            <p className="text-3xl font-bold text-green-600"></p>
+            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
             <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Buy</h2>
-            <p className="text-3xl font-bold text-green-600"></p>
+            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
             <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Sell</h2>
-            <p className="text-3xl font-bold text-green-600"></p>
+            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
             {/* <ResponsiveContainer width="100%" height={200}>
               <LineChart data={marketData}>
                 <XAxis dataKey="name" />

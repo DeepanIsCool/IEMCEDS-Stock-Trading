@@ -28,6 +28,7 @@ const AuthPage = () => {
         }
       }
       const data = await response.json();
+      localStorage.setItem("authToken",response.accessToken);
       return data;
     } catch (error) {
       throw error;
@@ -51,6 +52,7 @@ const AuthPage = () => {
         }
       }
       const data = await response.json();
+      localStorage.setItem("authToken",response.accessToken);
       return data;
     } catch (error) {
       throw error;
