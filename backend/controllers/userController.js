@@ -1,35 +1,31 @@
-const asyncHandler = require("express-async-handler");
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const constants = require("../constants");
+const asyncHandler = require('express-async-handler');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const User = require('../models/user');
 
 // Sign-up function
 const Sign_up = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { email, password, name} = req.body;
 
   // Validate request
-  if (!name || !email || !password) {
-    return res.status(constants.VALIDATION_ERROR).json("All fields are required");
+  if (!email || !password || !name) {
+    return res.status(400).json("All fields are required");
   }
 
   // Check if user already exists
-  const userAvailable = await User.findOne({
-    $or: [{ email: email }, { name: name }],
-  });
-
-  if (userAvailable) {
-    return res.status(constants.CONFLICT).json("User already registered");
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    return res.status(400).json("User already exists");
   }
 
-  // Hash the password
+  // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Create a new user
+  // Create new user
   const newUser = {
-    name: name,
-    email: email,
+    email,
     password: hashedPassword,
+    name,
   };
 
   const user = await User.create(newUser);
@@ -42,7 +38,6 @@ const Sign_up = asyncHandler(async (req, res) => {
       },
     },
     process.env.ACCESS_TOKEN_SECRET
-    // No 'expiresIn' key for indefinite token
   );
 
   // Assign token to user and save
@@ -59,11 +54,11 @@ const Sign_in = asyncHandler(async (req, res) => {
 
   // Validate request
   if (!email || !password) {
-    return res.status(constants.VALIDATION_ERROR).json("All fields are required");
+    return res.status(400).json("All fields are required");
   }
 
   // Check if user exists
-  const userAvailable = await User.findOne({ email: email });
+  const userAvailable = await User.findOne({ email });
 
   if (userAvailable && (await bcrypt.compare(password, userAvailable.password))) {
     // Generate JWT with expiration
@@ -74,17 +69,39 @@ const Sign_in = asyncHandler(async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: '1h' }
     );
 
-    // Assign token to user and save
-    userAvailable.access_token = accessToken;
-    await userAvailable.save();
-
     // Respond with the access token
-    res.status(constants.OK).json({ accessToken });
-  } else {
-    res.status(constants.UNAUTHORIZED).json("Email or password is invalid");
+    res.json({ accessToken });
+  }
+  else if(!userAvailable) {
+    res.status(401).json("Please Sign-Up first");
+  }
+  else {
+    res.status(401).json("Invalid email or password");
   }
 });
 
-module.exports = { Sign_up, Sign_in };
+// Fetch user data function
+const getUserData = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const user = await User.findById(userId).select('-password');
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json("User not found");
+  }
+});
+
+const Sign_out = asyncHandler(async (req, res) => {
+  // Invalidate the token on the client side
+  res.status(200).json({ message: "User signed out successfully" });
+});
+
+module.exports = {
+  Sign_up,
+  Sign_in,
+  Sign_out,
+  getUserData,
+};

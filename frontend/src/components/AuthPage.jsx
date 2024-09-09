@@ -1,16 +1,79 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // Ensure correct import
 
 const AuthPage = () => {
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const signIn = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/users/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Invalid email or password');
+        } else {
+          throw new Error('Sign-in failed');
+        }
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const signUp = async (name, email, password) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/users/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (!response.ok) {
+        if (response.status === 400) {
+          throw new Error('User already exists');
+        } else {
+          throw new Error('Sign-up failed');
+        }
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(isLogin ? 'Logging in' : 'Signing up', { email, password, name });
+    setError('');
+    try {
+      if (isLogin) {
+        const data = await signIn(email, password);
+        console.log('Logged in:', data);
+        login(data.accessToken);
+      } else {
+        const data = await signUp(name, email, password);
+        console.log('Signed up:', data);
+        login(data.accessToken);
+      }
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
+    }
   };
 
   return (
@@ -26,6 +89,7 @@ const AuthPage = () => {
             {isLogin ? 'Sign in to your account' : 'Create a new account'}
           </h2>
         </div>
+        {error && <div className="text-red-500 text-center">{error}</div>}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
@@ -51,14 +115,11 @@ const AuthPage = () => {
                 Email address
               </label>
               <input
-                id="email"
+                id="email-address"
                 name="email"
                 type="email"
-                autoComplete="email"
                 required
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 ${
-                  isLogin ? 'rounded-t-md' : ''
-                } focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -81,7 +142,6 @@ const AuthPage = () => {
               />
             </div>
           </div>
-
           <div>
             <button
               type="submit"
@@ -93,7 +153,10 @@ const AuthPage = () => {
         </form>
         <div className="text-center">
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setError(''); // Clear error message when switching modes
+            }}
             className="font-medium text-blue-600 hover:text-blue-500"
           >
             {isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in'}

@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cors());
 
 //Routes
-app.use("/api/userRoutes", require("./routes/userRoutes"));
+app.use("/api/users", require("./routes/userRoutes")); // Change this line
 
 app.get("/api", (req, res) => {
     res.send("Welcome to the TradePro Backend");

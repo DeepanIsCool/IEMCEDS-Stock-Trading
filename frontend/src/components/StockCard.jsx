@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import BuyStock from '../modals/BuyStock';
 
 const StockCard = ({ stockSymbol, stockName, stockPrice, stockChange }) => {
   return (
@@ -14,9 +15,16 @@ const StockCard = ({ stockSymbol, stockName, stockPrice, stockChange }) => {
       </div>
       <Link
         to={`/stock/${stockSymbol}`}
-        className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg text-center"
+        className="mt-4 mr-2 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg text-center"
       >
         View Details
+      </Link>
+      <BuyStock/>
+      <Link
+        to={`/stock/${stockSymbol}`}
+        className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg text-center"
+      >
+        SELL 
       </Link>
     </div>
   );

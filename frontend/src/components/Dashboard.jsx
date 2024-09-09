@@ -3,22 +3,26 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import StockCard from './StockCard';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import axios from 'axios';
 
 const Dashboard = () => {
-  const [marketData, setMarketData] = useState([]);
-  const [portfolioValue, setPortfolioValue] = useState(0);
+  const [userDetails, setUserDetails]=useState(null)
 
   useEffect(() => {
-    // Simulated data fetch
-    setMarketData([
-      { name: 'Jan', value: 4000 },
-      { name: 'Feb', value: 3000 },
-      { name: 'Mar', value: 5000 },
-      { name: 'Apr', value: 4500 },
-      { name: 'May', value: 6000 },
-      { name: 'Jun', value: 5500 },
-    ]);
-    setPortfolioValue(25000);
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/users/profile', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          },
+        });
+        setUserDetails(response.data);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserDetails();
   }, []);
 
   return (
@@ -34,6 +38,9 @@ const Dashboard = () => {
             </motion.li>
             <motion.li whileHover={{ scale: 1.05 }} className="mb-4">
               <Link to="/watchlist" className="hover:text-gray-300">Watchlist</Link>
+            </motion.li>
+            <motion.li whileHover={{ scale: 1.05 }} className="mb-4 font-extrabold">
+              <Link to="/trading" className="hover:text-gray-300">TRADING</Link>
             </motion.li>
             <motion.li whileHover={{ scale: 1.05 }} className="mb-4">
               <Link to="/news" className="hover:text-gray-300">News</Link>
@@ -56,16 +63,22 @@ const Dashboard = () => {
             transition={{ duration: 0.5 }}
             className="p-6 bg-white rounded-lg shadow-lg"
           >
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Portfolio Value</h2>
-            <p className="text-3xl font-bold text-green-600">${portfolioValue.toLocaleString()}</p>
-            <ResponsiveContainer width="100%" height={200}>
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">Cash Holdings</h2>
+            <p className="text-3xl font-bold text-green-600"></p>
+            <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Profit/Loss</h2>
+            <p className="text-3xl font-bold text-green-600"></p>
+            <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Buy</h2>
+            <p className="text-3xl font-bold text-green-600"></p>
+            <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Sell</h2>
+            <p className="text-3xl font-bold text-green-600"></p>
+            {/* <ResponsiveContainer width="100%" height={200}>
               <LineChart data={marketData}>
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Line type="monotone" dataKey="value" stroke="#8884d8" />
               </LineChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer> */}
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

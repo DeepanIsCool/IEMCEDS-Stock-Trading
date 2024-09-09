@@ -9,21 +9,26 @@ import News from './components/News';
 import Learn from './components/Learn';
 import Profile from './components/Profile';
 import AuthPage from './components/AuthPage';
+import Trading from './components/Trading';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/stock/:id" element={<StockDetails />} />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/watchlist" element={<Watchlist />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/learn" element={<Learn />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/stock/:id" element={<StockDetails />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/learn" element={<Learn />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/trading" element={<Trading />} />
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }

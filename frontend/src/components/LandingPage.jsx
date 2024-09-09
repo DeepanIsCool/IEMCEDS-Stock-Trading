@@ -88,7 +88,7 @@ const LandingPage = () => {
               transition={{ duration: 0.5, delay: 0.6 }}
             >
               <Link
-                to="/Dashboard"
+                to="/auth"
                 className="px-8 py-3 bg-green-500 text-white text-lg rounded-lg hover:bg-green-600 transition duration-300"
               >
                 Get Started
