@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Ensure correct import
+import { Link, useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
-  const { login } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -12,51 +11,43 @@ const AuthPage = () => {
   const [error, setError] = useState('');
 
   const signIn = async (email, password) => {
-    try {
-      const response = await fetch('http://localhost:8000/api/users/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error('Invalid email or password');
-        } else {
-          throw new Error('Sign-in failed');
-        }
+    const response = await fetch('http://localhost:8000/api/users/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Invalid email or password');
+      } else {
+        throw new Error('Sign-in failed');
       }
-      const data = await response.json();
-      localStorage.setItem("authToken",response.accessToken);
-      return data;
-    } catch (error) {
-      throw error;
     }
+    const data = await response.json();
+    localStorage.setItem('authToken', data.accessToken); // Store accessToken in localStorage
+    return data;
   };
 
   const signUp = async (name, email, password) => {
-    try {
-      const response = await fetch('http://localhost:8000/api/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
-      if (!response.ok) {
-        if (response.status === 400) {
-          throw new Error('User already exists');
-        } else {
-          throw new Error('Sign-up failed');
-        }
+    const response = await fetch('http://localhost:8000/api/users/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+    if (!response.ok) {
+      if (response.status === 400) {
+        throw new Error('User already exists');
+      } else {
+        throw new Error('Sign-up failed');
       }
-      const data = await response.json();
-      localStorage.setItem("authToken",response.accessToken);
-      return data;
-    } catch (error) {
-      throw error;
     }
+    const data = await response.json();
+    localStorage.setItem('authToken', data.accessToken); // Store accessToken in localStorage
+    return data;
   };
 
   const handleSubmit = async (e) => {
@@ -66,11 +57,11 @@ const AuthPage = () => {
       if (isLogin) {
         const data = await signIn(email, password);
         console.log('Logged in:', data);
-        login(data.accessToken);
+        navigate('/dashboard'); // Navigate to dashboard on successful sign-in
       } else {
         const data = await signUp(name, email, password);
         console.log('Signed up:', data);
-        login(data.accessToken);
+        navigate('/dashboard'); // Navigate to dashboard on successful sign-up
       }
     } catch (error) {
       console.error(error);

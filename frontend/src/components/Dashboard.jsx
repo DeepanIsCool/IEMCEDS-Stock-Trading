@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import StockCard from './StockCard';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import StockCard from './StockCard'; // Assuming you have a StockCard component
 import axios from 'axios';
 
 const Dashboard = () => {
-  const [userDetails, setUserDetails]=useState(null)
+  const [userDetails, setUserDetails] = useState([]); // Store user details here
+  const [loading, setLoading] = useState(true); // Track loading state
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -16,13 +16,25 @@ const Dashboard = () => {
             Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
         });
-        setUserDetails(response.data);
+        console.log('User details:', response.data); // Log response for debugging
+        setUserDetails(response.data); // Store data in state
+        setLoading(false); // Stop loading once data is fetched
       } catch (error) {
         console.error('Error fetching user details:', error);
+        setLoading(false); // Stop loading if an error occurs
       }
     };
+
     fetchUserDetails();
   }, []);
+
+  if (loading) {
+    return <p>Loading user data...</p>; // Display loading state
+  }
+
+  // if (!userDetails) {
+  //   return <p>No user data available. Please try again later.</p>; // Handle null or empty state
+  // }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
@@ -53,6 +65,7 @@ const Dashboard = () => {
           </ul>
         </nav>
       </aside>
+
       <main className="flex-1 p-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -63,22 +76,15 @@ const Dashboard = () => {
             className="p-6 bg-white rounded-lg shadow-lg"
           >
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Cash Holdings</h2>
-            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
+            <p className="text-3xl font-bold text-green-600">${userDetails.cash_holding.cash_in_hand}</p>
             <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Profit/Loss</h2>
-            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
+            <p className="text-3xl font-bold text-green-600">${userDetails.cash_holding.intraday_profit_loss}</p>
             <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Buy</h2>
-            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
+            <p className="text-3xl font-bold text-green-600">${userDetails.intraday_holdings.intraday_buy}</p>
             <h2 className="text-xl font-semibold text-gray-700 my-4">Intraday Sell</h2>
-            <p className="text-3xl font-bold text-green-600">${userDetails}</p>
-            {/* <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={marketData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer> */}
+            <p className="text-3xl font-bold text-green-600">${userDetails.intraday_holdings.intraday_sell}</p>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,6 +95,7 @@ const Dashboard = () => {
             <StockCard stockSymbol="AAPL" stockName="Apple Inc." stockPrice={150.25} stockChange={2.5} />
             <StockCard stockSymbol="GOOGL" stockName="Alphabet Inc." stockPrice={2750.80} stockChange={-1.2} />
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,6 +122,6 @@ const Dashboard = () => {
       </main>
     </div>
   );
-}
+};
 
 export default Dashboard;

@@ -18,7 +18,7 @@ module.exports.authMiddleware = async (req, res, next) => {
       try {
         const userAvailable = await User.findOne({ _id: userId });
         if (userAvailable) {
-          req.user = userAvailable; // Set the faculty object to `req.user`
+          req.user = userAvailable; // Set the user object to `req.user`
           next();
         } else {
           return res.status(403).json({ message: "Unauthorized" });
