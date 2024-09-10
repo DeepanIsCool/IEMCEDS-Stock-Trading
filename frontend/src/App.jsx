@@ -9,7 +9,7 @@ import News from './components/News';
 import Learn from './components/Learn';
 import Profile from './components/Profile';
 import AuthPage from './components/AuthPage';
-import Trading from './components/Trading';
+import Trading from './components/Trading/Trading';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
