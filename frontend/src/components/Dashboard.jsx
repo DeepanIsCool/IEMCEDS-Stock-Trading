@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import StockCard from './StockCard'; // Assuming you have a StockCard component
 import axios from 'axios';
@@ -7,6 +7,7 @@ import axios from 'axios';
 const Dashboard = () => {
   const [userDetails, setUserDetails] = useState([]); // Store user details here
   const [loading, setLoading] = useState(true); // Track loading state
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -35,6 +36,11 @@ const Dashboard = () => {
   // if (!userDetails) {
   //   return <p>No user data available. Please try again later.</p>; // Handle null or empty state
   // }
+  const logout = () => {
+    localStorage.removeItem('authToken');// Remove accessToken from localStorage
+    console.clear() 
+    navigate('/'); // Redirect to login page
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
@@ -61,6 +67,9 @@ const Dashboard = () => {
             </motion.li>
             <motion.li whileHover={{ scale: 1.05 }} className="mb-4">
               <Link to="/profile" className="hover:text-gray-300">Profile</Link>
+            </motion.li>
+            <motion.li whileHover={{ scale: 1.05 }} className="mb-4">
+              <button onClick={logout} className="hover:text-gray-300">Log Out</button>
             </motion.li>
           </ul>
         </nav>

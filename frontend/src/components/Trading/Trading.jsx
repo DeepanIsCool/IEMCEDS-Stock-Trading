@@ -1,29 +1,15 @@
-import React from 'react'
-import { CandleSeries, Crosshair, DateTime,Inject, LineSeries, StockChartComponent, StockChartSeriesCollectionDirective, StockChartSeriesDirective, Tooltip } from '@syncfusion/ej2-react-charts';
-import { EmaIndicator, RsiIndicator, BollingerBands, TmaIndicator, MomentumIndicator, SmaIndicator, AtrIndicator, AccumulationDistributionIndicator, MacdIndicator, StochasticIndicator, Export } from '@syncfusion/ej2-react-charts';
-
+import React from 'react';
 
 const Trading = () => {
-  return (
-    <div>
-      <StockChartComponent title='Stock Price Analysis' crosshair={{enable:true, lineType:'Both'}} 
-        primaryXAxis={{
-          crosshairTooltip:{enable:true}
-        }}
-        tooltip={{enable:true}} 
-        enableSelector={false}
-        periods={[
-         { text: '12H', interval: 12, intervalType: 'Hours', selected: true }
-        ]}
-        enablePeriodSelector={false}>
-      <StockChartSeriesCollectionDirective>
-        <StockChartSeriesDirective dataSource={chartData} type='Candle' xName='x'>
-        </StockChartSeriesDirective>
-      </StockChartSeriesCollectionDirective>
-      <Inject services={[DateTime, Tooltip, Crosshair,  CandleSeries,LineSeries, EmaIndicator, RsiIndicator, BollingerBands, TmaIndicator, MomentumIndicator, SmaIndicator, AtrIndicator, Export, AccumulationDistributionIndicator, MacdIndicator, StochasticIndicator]}/>
-      </StockChartComponent>
-    </div>
-  )
-}
+    return (
+        <div style={{ height: '100vh', width: '100%' }}>
+            <iframe
+                src="http://127.0.0.1:5000/"
+                style={{ border: 'none', width: '100%', height: '100%' }}
+                title="Trading Page"
+            ></iframe>
+        </div>
+    );
+};
 
-export default Trading
+export default Trading;
